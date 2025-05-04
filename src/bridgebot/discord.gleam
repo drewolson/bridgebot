@@ -2,10 +2,13 @@ import bridgebot/parser
 import bridgebot/pprint
 import discord_gleam
 import discord_gleam/discord/intents
+import discord_gleam/discord/snowflake
 import discord_gleam/event_handler.{type Packet}
 import discord_gleam/http/request
 import discord_gleam/types/bot.{type Bot}
-import discord_gleam/ws/packets/message.{type MessageAuthor, type MessagePacket}
+import discord_gleam/ws/packets/message.{
+  type MessageAuthor, type MessagePacketData,
+}
 import envoy
 import gleam/dynamic/decode
 import gleam/hackney
@@ -66,17 +69,34 @@ fn set_log_level() -> Nil {
   logging.set_level(level)
 }
 
-fn handle_message(bot: Bot, message: MessagePacket, content: String) -> Nil {
-  discord_gleam.delete_message(
-    bot,
-    message.d.channel_id,
-    message.d.id,
-    "bridge bot",
-  )
+fn delete_non_dm(bot: Bot, message: MessagePacketData) -> Nil {
+  case message.guild_id {
+    "" -> Nil
+    _ -> {
+      discord_gleam.delete_message(
+        bot,
+        message.channel_id,
+        message.id,
+        "bridge bot",
+      )
+
+      Nil
+    }
+  }
+}
+
+fn handle_bridge_message(
+  bot: Bot,
+  message: MessagePacketData,
+  content: String,
+) -> Nil {
+  logging.log(logging.Info, string.inspect(message))
+
+  delete_non_dm(bot, message)
 
   case content {
     "help" -> {
-      use channel <- with_dm(bot, message.d.author)
+      use channel <- with_dm(bot, message.author)
 
       pprint.help()
       |> wrap_in_backticks
@@ -87,12 +107,12 @@ fn handle_message(bot: Bot, message: MessagePacket, content: String) -> Nil {
         Ok(diagram) -> {
           diagram
           |> pprint.to_string
-          |> prepend_username(message.d.author.username)
+          |> prepend_username(message.author.username)
           |> wrap_in_backticks
-          |> discord_gleam.send_message(bot, message.d.channel_id, _, [])
+          |> discord_gleam.send_message(bot, message.channel_id, _, [])
         }
         Error(e) -> {
-          use channel <- with_dm(bot, message.d.author)
+          use channel <- with_dm(bot, message.author)
           let error = wrap_in_backticks("Error parsing your command: " <> e)
 
           discord_gleam.send_message(bot, channel.id, error, [])
@@ -101,19 +121,49 @@ fn handle_message(bot: Bot, message: MessagePacket, content: String) -> Nil {
   }
 }
 
+fn handle_message(bot: Bot, message: MessagePacketData) -> Nil {
+  case message.content {
+    "!bridge" <> rest -> {
+      let content = trim(rest)
+      handle_bridge_message(bot, message, content)
+    }
+    _ -> Nil
+  }
+}
+
 fn handler(bot: Bot, packet: Packet) -> Nil {
   case packet {
-    event_handler.MessagePacket(message) -> {
-      case message.d.content {
-        "!bridge" <> rest -> {
-          logging.log(logging.Info, string.inspect(packet))
+    event_handler.UnknownPacket(generic) if generic.t == "MESSAGE_CREATE" -> {
+      let decoder = {
+        use content <- decode.field("content", decode.string)
+        use id <- decode.field("id", snowflake.decoder())
+        use guild_id <- decode.optional_field(
+          "guild_id",
+          "",
+          snowflake.decoder(),
+        )
+        use channel_id <- decode.field("channel_id", snowflake.decoder())
+        use author <- decode.field("author", {
+          use id <- decode.field("id", snowflake.decoder())
+          use username <- decode.field("username", decode.string)
+          decode.success(message.MessageAuthor(id:, username:))
+        })
+        decode.success(message.MessagePacketData(
+          content:,
+          id:,
+          guild_id:,
+          channel_id:,
+          author:,
+        ))
+      }
 
-          let content = trim(rest)
-          handle_message(bot, message, content)
-        }
-        _ -> Nil
+      case decode.run(generic.d, decoder) {
+        Ok(data) -> handle_message(bot, data)
+        Error(_) -> Nil
       }
     }
+
+    event_handler.MessagePacket(message) -> handle_message(bot, message.d)
     _ -> Nil
   }
 }
@@ -130,7 +180,11 @@ pub fn main() {
     discord_gleam.bot(
       token,
       client_id,
-      intents.Intents(message_content: True, guild_messages: True),
+      intents.Intents(
+        message_content: True,
+        guild_messages: True,
+        direct_messages: True,
+      ),
     )
 
   discord_gleam.run(bot, [handler])
