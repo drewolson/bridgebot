@@ -1,0 +1,15 @@
+---
+version: 1.2.7
+title: bridgebot defender east
+file: ./test/bridgebot_test.gleam
+test_name: defender_east_test
+---
+♠T987      R/R
+♥6543      IMPs
+♦
+♣76532
+ -----     ♠AKQJ
+|  N  |    ♥AKQJ
+|    E|    ♦AK
+|     |    ♣KJ9
+ -----

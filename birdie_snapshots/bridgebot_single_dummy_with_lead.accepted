@@ -1,0 +1,19 @@
+---
+version: 1.2.7
+title: bridgebot single dummy with lead
+file: ./test/bridgebot_test.gleam
+test_name: single_dummy_with_lead_test
+---
+R/R        ♠AKx
+MPs        ♥QTxxx
+           ♦Jxx
+           ♣Tx
+Lead: ♣A    -----
+           |  N  |
+           |W   E|
+           |  S  |
+            -----
+           ♠QJxxx
+           ♥AKx
+           ♦Qx
+           ♣xxx

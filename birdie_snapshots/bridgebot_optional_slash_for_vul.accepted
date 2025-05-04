@@ -1,0 +1,10 @@
+---
+version: 1.2.7
+title: bridgebot optional slash for vul
+file: ./test/bridgebot_test.gleam
+test_name: optional_slash_for_vul_test
+---
+♠AKx       R/R
+♥QTxxx     MPs
+♦Jxx
+♣Tx

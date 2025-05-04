@@ -1,0 +1,19 @@
+---
+version: 1.2.7
+title: bridgebot double dummy
+file: ./test/bridgebot_test.gleam
+test_name: double_dummy_test
+---
+R/R        ♠T987
+IMPs       ♥6543
+           ♦
+           ♣76532
+♠65432      -----     ♠
+♥T9872     |  N  |    ♥
+♦JT9       |W   E|    ♦Q8765432
+♣          |  S  |    ♣AQT84
+            -----
+           ♠AKQJ
+           ♥AKQJ
+           ♦AK
+           ♣KJ9

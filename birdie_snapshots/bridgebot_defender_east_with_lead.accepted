@@ -1,0 +1,15 @@
+---
+version: 1.2.7
+title: bridgebot defender east with lead
+file: ./test/bridgebot_test.gleam
+test_name: defender_east_with_lead_test
+---
+R/R        ♠T987
+IMPs       ♥6543
+           ♦
+           ♣76532
+Lead: ♣A    -----     ♠AKQJ
+           |  N  |    ♥AKQJ
+           |    E|    ♦AK
+           |     |    ♣KJ9
+            -----

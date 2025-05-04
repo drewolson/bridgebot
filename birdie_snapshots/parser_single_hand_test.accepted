@@ -1,0 +1,7 @@
+---
+version: 1.2.7
+title: parser single hand test
+file: ./test/bridgebot/parser_test.gleam
+test_name: single_hand_test
+---
+Ok(Diagram(SingleHand([Card(Spades, Known(Ace)), Card(Spades, Known(King)), Card(Spades, Unknown), Card(Hearts, Known(Queen)), Card(Hearts, Known(Ten)), Card(Hearts, Unknown), Card(Hearts, Unknown), Card(Hearts, Unknown), Card(Diamonds, Known(Jack)), Card(Diamonds, Unknown), Card(Diamonds, Unknown), Card(Clubs, Known(Ten)), Card(Clubs, Unknown)]), None, None, None))

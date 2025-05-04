@@ -1,0 +1,10 @@
+---
+version: 1.2.7
+title: bridgebot single hand
+file: ./test/bridgebot_test.gleam
+test_name: single_hand_test
+---
+♠AKx       R/R
+♥QTxxx     MPs
+♦Jxx
+♣Tx
