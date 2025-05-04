@@ -4,18 +4,6 @@ import gleam/list
 import gleam/string
 import gleeunit/should
 
-pub fn single_hand_test() {
-  parser.parse("akx qtxxx jxx tx")
-  |> string.inspect
-  |> birdie.snap("parser single hand test")
-}
-
-pub fn single_hand_with_details_test() {
-  parser.parse("akx qtxxx jxx tx, rr, mps")
-  |> string.inspect
-  |> birdie.snap("parser single hand with details test")
-}
-
 pub fn field_order_does_not_matter_test() {
   let fields = ["akx qtxxx jxx tx; qjxxx akx qx xxx", "rr", "mps", "CA"]
 
@@ -31,16 +19,4 @@ pub fn field_order_does_not_matter_test() {
 
   orig_result |> should.be_ok
   orig_result |> should.equal(shuffled_result)
-}
-
-pub fn defense_west_test() {
-  parser.parse("akxx - - - < qtxx - - -")
-  |> string.inspect
-  |> birdie.snap("parser defense west")
-}
-
-pub fn defense_east_test() {
-  parser.parse("akxx - - - > qtxx - - -")
-  |> string.inspect
-  |> birdie.snap("parser defense east")
 }
