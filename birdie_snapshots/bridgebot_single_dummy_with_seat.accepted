@@ -4,9 +4,9 @@ title: bridgebot single dummy with seat
 file: ./test/bridgebot_test.gleam
 test_name: single_dummy_with_seat_test
 ---
-R/R        ♠AKx
-MPs        ♥QTxxx
-1st seat   ♦Jxx
+1st seat   ♠AKx
+R/R        ♥QTxxx
+MPs        ♦Jxx
            ♣Tx
 Lead: ♣A
            ♠QJxxx

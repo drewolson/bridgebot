@@ -105,9 +105,9 @@ pub fn details(
   seat: Option(seat.Seat),
 ) -> Box {
   [
+    option.map(seat, seat.to_string),
     option.map(vul, vul.to_string),
     option.map(scoring, scoring.to_string),
-    option.map(seat, seat.to_string),
   ]
   |> option.values
   |> Box
