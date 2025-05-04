@@ -57,14 +57,14 @@ fn single_dummy_to_string(
     None ->
       box.rows([
         box.columns([box.hand(north), box.details(vul, scoring, seat)]),
-        box.compass(),
+        box.empty(1),
         box.hand(south),
       ])
       |> box.to_string
     Some(card) ->
       box.rows([
         box.columns([box.details(vul, scoring, seat), box.hand(north)]),
-        box.columns([box.lead(card), box.compass()]),
+        box.lead(card),
         box.columns([box.empty(10), box.hand(south)]),
       ])
       |> box.to_string
