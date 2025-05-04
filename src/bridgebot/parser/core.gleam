@@ -21,18 +21,29 @@ pub fn drop_whitespace(p: Parser(a)) -> Parser(a) {
 
 pub fn replace(p: Parser(a), v: b) -> Parser(b) {
   use <- party.drop(p)
+
   party.return(v)
 }
 
-fn insensitive(f: fn(String) -> Parser(String), s: String) -> Parser(String) {
-  party.choice([f(string.lowercase(s)), f(string.uppercase(s))])
+pub fn char_i(c: String) -> Parser(String) {
+  party.choice([
+    party.char(string.lowercase(c)),
+    party.char(string.uppercase(c)),
+  ])
   |> party.map(string.lowercase)
 }
 
-pub fn string_i(s: String) -> Parser(String) {
-  insensitive(party.string, s)
+fn string_i_aux(s: String, chars: List(String)) -> Parser(String) {
+  case chars {
+    [] -> party.return(s)
+    [h, ..t] -> {
+      use <- party.drop(char_i(h))
+
+      string_i_aux(s, t)
+    }
+  }
 }
 
-pub fn char_i(c: String) -> Parser(String) {
-  insensitive(party.char, c)
+pub fn string_i(s: String) -> Parser(String) {
+  string_i_aux(s, string.to_graphemes(s))
 }
