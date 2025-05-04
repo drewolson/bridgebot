@@ -1,4 +1,3 @@
-import birdie
 import bridgebot/parser
 import gleam/list
 import gleam/string
@@ -12,10 +11,6 @@ pub fn field_order_does_not_matter_test() {
 
   let orig_result = parser.parse(orig)
   let shuffled_result = parser.parse(shuffled)
-
-  orig_result
-  |> string.inspect
-  |> birdie.snap("parser field order does not matter")
 
   orig_result |> should.be_ok
   orig_result |> should.equal(shuffled_result)

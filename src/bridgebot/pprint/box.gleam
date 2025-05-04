@@ -1,4 +1,5 @@
 import bridgebot/card.{type Card}
+import bridgebot/details
 import bridgebot/hand
 import bridgebot/index
 import bridgebot/scoring
@@ -8,7 +9,7 @@ import bridgebot/vul
 import gleam/dict
 import gleam/int
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option
 import gleam/order
 import gleam/result
 import gleam/string
@@ -99,15 +100,11 @@ pub fn hand(hand: hand.Hand) -> Box {
   |> pad(10)
 }
 
-pub fn details(
-  vul: Option(vul.Vul),
-  scoring: Option(scoring.Scoring),
-  seat: Option(seat.Seat),
-) -> Box {
+pub fn details(details: details.Details) -> Box {
   [
-    option.map(seat, seat.to_string),
-    option.map(vul, vul.to_string),
-    option.map(scoring, scoring.to_string),
+    option.map(details.seat, seat.to_string),
+    option.map(details.vul, vul.to_string),
+    option.map(details.scoring, scoring.to_string),
   ]
   |> option.values
   |> Box

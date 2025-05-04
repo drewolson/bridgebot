@@ -1,4 +1,5 @@
 import bridgebot/card.{type Card}
+import bridgebot/details.{Details}
 import bridgebot/diagram.{type Diagram, Diagram}
 import bridgebot/layout.{type Layout}
 import bridgebot/parser/card_parser
@@ -118,9 +119,10 @@ pub fn diagram_p() -> Parser(Diagram) {
   use fields <- party.try(fields_p())
   use layout <- result.map(fetch_layout(fields))
   let lead = fetch_lead(fields)
+  let seat = fetch_seat(fields)
   let vul = fetch_vul(fields)
   let scoring = fetch_scoring(fields)
-  let seat = fetch_seat(fields)
+  let details = Details(seat:, vul:, scoring:)
 
-  Diagram(layout:, lead:, vul:, scoring:, seat:)
+  Diagram(layout:, lead:, details:)
 }
