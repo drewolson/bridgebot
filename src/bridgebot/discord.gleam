@@ -2,7 +2,6 @@ import bridgebot/parser
 import bridgebot/pprint
 import discord_gleam
 import discord_gleam/discord/intents
-import discord_gleam/discord/snowflake
 import discord_gleam/event_handler.{type Packet}
 import discord_gleam/http/request
 import discord_gleam/types/bot.{type Bot}
@@ -87,16 +86,16 @@ fn delete_non_dm(bot: Bot, message: MessagePacketData) -> Nil {
 
 fn handle_bridge_message(
   bot: Bot,
-  message: MessagePacketData,
+  data: MessagePacketData,
   content: String,
 ) -> Nil {
-  logging.log(logging.Info, string.inspect(message))
+  logging.log(logging.Info, string.inspect(data))
 
-  delete_non_dm(bot, message)
+  delete_non_dm(bot, data)
 
   case content {
     "help" -> {
-      use channel <- with_dm(bot, message.author)
+      use channel <- with_dm(bot, data.author)
 
       pprint.help()
       |> wrap_in_backticks
@@ -107,12 +106,12 @@ fn handle_bridge_message(
         Ok(diagram) -> {
           diagram
           |> pprint.to_string
-          |> prepend_username(message.author.username)
+          |> prepend_username(data.author.username)
           |> wrap_in_backticks
-          |> discord_gleam.send_message(bot, message.channel_id, _, [])
+          |> discord_gleam.send_message(bot, data.channel_id, _, [])
         }
         Error(e) -> {
-          use channel <- with_dm(bot, message.author)
+          use channel <- with_dm(bot, data.author)
           let error = wrap_in_backticks("Error parsing your command: " <> e)
 
           discord_gleam.send_message(bot, channel.id, error, [])
@@ -121,49 +120,16 @@ fn handle_bridge_message(
   }
 }
 
-fn handle_message(bot: Bot, message: MessagePacketData) -> Nil {
-  case message.content {
-    "!bridge" <> rest -> {
-      let content = trim(rest)
-      handle_bridge_message(bot, message, content)
-    }
-    _ -> Nil
-  }
-}
-
 fn handler(bot: Bot, packet: Packet) -> Nil {
   case packet {
-    event_handler.UnknownPacket(generic) if generic.t == "MESSAGE_CREATE" -> {
-      let decoder = {
-        use content <- decode.field("content", decode.string)
-        use id <- decode.field("id", snowflake.decoder())
-        use guild_id <- decode.optional_field(
-          "guild_id",
-          "",
-          snowflake.decoder(),
-        )
-        use channel_id <- decode.field("channel_id", snowflake.decoder())
-        use author <- decode.field("author", {
-          use id <- decode.field("id", snowflake.decoder())
-          use username <- decode.field("username", decode.string)
-          decode.success(message.MessageAuthor(id:, username:))
-        })
-        decode.success(message.MessagePacketData(
-          content:,
-          id:,
-          guild_id:,
-          channel_id:,
-          author:,
-        ))
+    event_handler.MessagePacket(message) ->
+      case message.d.content {
+        "!bridge" <> rest -> {
+          let content = trim(rest)
+          handle_bridge_message(bot, message.d, content)
+        }
+        _ -> Nil
       }
-
-      case decode.run(generic.d, decoder) {
-        Ok(data) -> handle_message(bot, data)
-        Error(_) -> Nil
-      }
-    }
-
-    event_handler.MessagePacket(message) -> handle_message(bot, message.d)
     _ -> Nil
   }
 }
