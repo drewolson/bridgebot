@@ -1,6 +1,7 @@
 import bridgebot/card.{type Card}
 import bridgebot/layout.{type Layout}
 import bridgebot/scoring.{type Scoring}
+import bridgebot/seat.{type Seat}
 import bridgebot/vul.{type Vul}
 import gleam/option.{type Option}
 
@@ -10,5 +11,6 @@ pub type Diagram {
     lead: Option(Card),
     vul: Option(Vul),
     scoring: Option(Scoring),
+    seat: Option(Seat),
   )
 }

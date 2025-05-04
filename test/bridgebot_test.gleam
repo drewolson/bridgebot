@@ -41,6 +41,15 @@ pub fn single_dummy_with_lead_test() {
   |> birdie.snap("bridgebot single dummy with lead")
 }
 
+pub fn single_dummy_with_seat_test() {
+  let assert Ok(diagram) =
+    parser.parse("akx qtxxx jxx tx; qjxxx akx qx xxx, rr, mps, ca, 1st")
+
+  diagram
+  |> pprint.to_string
+  |> birdie.snap("bridgebot single dummy with seat")
+}
+
 pub fn double_dummy_test() {
   let assert Ok(diagram) =
     parser.parse(

@@ -4,4 +4,4 @@ title: parser defense west
 file: ./test/bridgebot/parser_test.gleam
 test_name: defense_west_test
 ---
-Ok(Diagram(Defense([Card(Spades, Known(Ace)), Card(Spades, Known(King)), Card(Spades, Unknown), Card(Spades, Unknown)], [Card(Spades, Known(Queen)), Card(Spades, Known(Ten)), Card(Spades, Unknown), Card(Spades, Unknown)], West), None, None, None))
+Ok(Diagram(Defense([Card(Spades, Known(Ace)), Card(Spades, Known(King)), Card(Spades, Unknown), Card(Spades, Unknown)], [Card(Spades, Known(Queen)), Card(Spades, Known(Ten)), Card(Spades, Unknown), Card(Spades, Unknown)], West), None, None, None, None))

@@ -6,6 +6,7 @@ import bridgebot/perspective
 import bridgebot/pprint/box
 import bridgebot/pprint/help
 import bridgebot/scoring
+import bridgebot/seat
 import bridgebot/vul
 import gleam/option.{type Option, None, Some}
 
@@ -14,14 +15,14 @@ pub fn help() -> String {
 }
 
 pub fn to_string(diagram: diagram.Diagram) {
-  let diagram.Diagram(layout:, lead:, vul:, scoring:) = diagram
+  let diagram.Diagram(layout:, lead:, vul:, scoring:, seat:) = diagram
 
   case layout {
     layout.DoubleDummy(north:, east:, south:, west:) ->
-      double_dummy_to_string(north, south, east, west, vul, scoring)
+      double_dummy_to_string(north, south, east, west, vul, scoring, seat)
     layout.SingleDummy(north:, south:) ->
-      single_dummy_to_string(north, south, lead, vul, scoring)
-    layout.SingleHand(hand:) -> single_hand_to_string(hand, vul, scoring)
+      single_dummy_to_string(north, south, lead, vul, scoring, seat)
+    layout.SingleHand(hand:) -> single_hand_to_string(hand, vul, scoring, seat)
     layout.Defense(defender:, dummy:, perspective:) ->
       defense_to_string(defender, dummy, perspective, lead, vul, scoring)
   }
@@ -34,9 +35,10 @@ fn double_dummy_to_string(
   west: hand.Hand,
   vul: Option(vul.Vul),
   scoring: Option(scoring.Scoring),
+  seat: Option(seat.Seat),
 ) -> String {
   box.rows([
-    box.columns([box.details(vul, scoring), box.hand(north)]),
+    box.columns([box.details(vul, scoring, seat), box.hand(north)]),
     box.columns([box.hand(west), box.compass(), box.hand(east)]),
     box.columns([box.empty(10), box.hand(south)]),
   ])
@@ -49,18 +51,19 @@ fn single_dummy_to_string(
   lead: Option(card.Card),
   vul: Option(vul.Vul),
   scoring: Option(scoring.Scoring),
+  seat: Option(seat.Seat),
 ) -> String {
   case lead {
     None ->
       box.rows([
-        box.columns([box.hand(north), box.details(vul, scoring)]),
+        box.columns([box.hand(north), box.details(vul, scoring, seat)]),
         box.compass(),
         box.hand(south),
       ])
       |> box.to_string
     Some(card) ->
       box.rows([
-        box.columns([box.details(vul, scoring), box.hand(north)]),
+        box.columns([box.details(vul, scoring, seat), box.hand(north)]),
         box.columns([box.lead(card), box.compass()]),
         box.columns([box.empty(10), box.hand(south)]),
       ])
@@ -72,8 +75,9 @@ fn single_hand_to_string(
   hand: hand.Hand,
   vul: Option(vul.Vul),
   scoring: Option(scoring.Scoring),
+  seat: Option(seat.Seat),
 ) -> String {
-  box.columns([box.hand(hand), box.details(vul, scoring)])
+  box.columns([box.hand(hand), box.details(vul, scoring, seat)])
   |> box.to_string
 }
 
@@ -88,19 +92,19 @@ fn defense_to_string(
   case perspective, lead {
     perspective.East, None ->
       box.rows([
-        box.columns([box.hand(dummy), box.details(vul, scoring)]),
+        box.columns([box.hand(dummy), box.details(vul, scoring, None)]),
         box.columns([box.compass_ne(), box.hand(defender)]),
       ])
       |> box.to_string
     perspective.East, Some(lead) ->
       box.rows([
-        box.columns([box.details(vul, scoring), box.hand(dummy)]),
+        box.columns([box.details(vul, scoring, None), box.hand(dummy)]),
         box.columns([box.lead(lead), box.compass_ne(), box.hand(defender)]),
       ])
       |> box.to_string
     perspective.West, _ ->
       box.rows([
-        box.columns([box.details(vul, scoring), box.hand(dummy)]),
+        box.columns([box.details(vul, scoring, None), box.hand(dummy)]),
         box.columns([box.hand(defender), box.compass_nw()]),
       ])
       |> box.to_string

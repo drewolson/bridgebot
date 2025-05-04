@@ -2,12 +2,13 @@ import bridgebot/card.{type Card}
 import bridgebot/hand
 import bridgebot/index
 import bridgebot/scoring
+import bridgebot/seat
 import bridgebot/suit
 import bridgebot/vul
 import gleam/dict
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option}
 import gleam/order
 import gleam/result
 import gleam/string
@@ -98,13 +99,18 @@ pub fn hand(hand: hand.Hand) -> Box {
   |> pad(10)
 }
 
-pub fn details(vul: Option(vul.Vul), scoring: Option(scoring.Scoring)) -> Box {
-  case vul, scoring {
-    Some(v), Some(s) -> Box([vul.to_string(v), scoring.to_string(s)])
-    Some(v), None -> Box([vul.to_string(v)])
-    None, Some(s) -> Box([scoring.to_string(s)])
-    _, _ -> empty(0)
-  }
+pub fn details(
+  vul: Option(vul.Vul),
+  scoring: Option(scoring.Scoring),
+  seat: Option(seat.Seat),
+) -> Box {
+  [
+    option.map(vul, vul.to_string),
+    option.map(scoring, scoring.to_string),
+    option.map(seat, seat.to_string),
+  ]
+  |> option.values
+  |> Box
   |> pad(10)
 }
 
