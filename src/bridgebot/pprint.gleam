@@ -51,7 +51,7 @@ fn single_dummy_to_string(
     None ->
       box.rows([
         box.columns([box.hand(north), box.details(details)]),
-        box.empty(1),
+        box.empty(10),
         box.hand(south),
       ])
       |> box.to_string

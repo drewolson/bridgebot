@@ -57,13 +57,6 @@ fn standardize_one(box: Box) -> Box {
   first
 }
 
-pub fn shift_down(box: Box, n: Int) -> Box {
-  list.repeat(" ", n)
-  |> list.append(box.lines)
-  |> Box
-  |> standardize_one
-}
-
 pub fn columns(boxes: List(Box)) -> Box {
   boxes
   |> standardize
