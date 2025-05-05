@@ -13,6 +13,7 @@ import gleam/dynamic/decode
 import gleam/hackney
 import gleam/http
 import gleam/json
+import gleam/option
 import gleam/result
 import gleam/string
 import logging
@@ -69,9 +70,9 @@ fn set_log_level() -> Nil {
 }
 
 fn delete_non_dm(bot: Bot, message: MessagePacketData) -> Nil {
-  case message.guild_id {
-    "" -> Nil
-    _ -> {
+  case option.is_some(message.guild_id) {
+    False -> Nil
+    True -> {
       discord_gleam.delete_message(
         bot,
         message.channel_id,
@@ -103,13 +104,12 @@ fn handle_bridge_message(
     }
     _ ->
       case parser.parse(content) {
-        Ok(diagram) -> {
+        Ok(diagram) ->
           diagram
           |> pprint.to_string
           |> prepend_username(data.author.username)
           |> wrap_in_backticks
           |> discord_gleam.send_message(bot, data.channel_id, _, [])
-        }
         Error(e) -> {
           use channel <- with_dm(bot, data.author)
           let error = wrap_in_backticks("Error parsing your command: " <> e)
