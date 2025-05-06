@@ -1,3 +1,5 @@
+import birl.{type Time}
+import birl/duration
 import bridgebot/parser
 import bridgebot/pprint
 import discord_gleam
@@ -8,14 +10,15 @@ import discord_gleam/types/bot.{type Bot}
 import discord_gleam/ws/packets/message.{
   type MessageAuthor, type MessagePacketData,
 }
-import envoy
 import gleam/dynamic/decode
 import gleam/hackney
 import gleam/http
 import gleam/json
 import gleam/option
+import gleam/order
 import gleam/result
 import gleam/string
+import glenvy/env
 import logging
 
 type Channel {
@@ -60,7 +63,7 @@ fn wrap_in_backticks(s: String) -> String {
 }
 
 fn set_log_level() -> Nil {
-  let level = case envoy.get("LOG_LEVEL") {
+  let level = case env.get_string("LOG_LEVEL") {
     Ok("DEBUG") -> logging.Debug
     Ok("INFO") -> logging.Info
     _ -> logging.Error
@@ -135,13 +138,37 @@ fn handler(bot: Bot, packet: Packet) -> Nil {
   }
 }
 
+pub fn run_bot(bot: Bot, last_restart: Time) -> Nil {
+  logging.log(logging.Info, "Starting bot")
+  logging.log(
+    logging.Info,
+    "Last restart at: " <> birl.to_iso8601(last_restart),
+  )
+
+  let now = birl.utc_now()
+  let diff = birl.difference(now, last_restart)
+
+  case duration.compare(diff, duration.minutes(1)) {
+    order.Gt -> {
+      logging.log(logging.Info, "Running...")
+      discord_gleam.run(bot, [handler])
+      run_bot(bot, now)
+    }
+    _ ->
+      logging.log(
+        logging.Info,
+        "Refusing to restart, last restart was too recent",
+      )
+  }
+}
+
 pub fn main() {
   logging.configure()
 
   set_log_level()
 
-  let assert Ok(token) = envoy.get("DISCORD_TOKEN")
-  let assert Ok(client_id) = envoy.get("DISCORD_CLIENT_ID")
+  let assert Ok(token) = env.get_string("DISCORD_TOKEN")
+  let assert Ok(client_id) = env.get_string("DISCORD_CLIENT_ID")
 
   let bot =
     discord_gleam.bot(
@@ -154,5 +181,7 @@ pub fn main() {
       ),
     )
 
-  discord_gleam.run(bot, [handler])
+  birl.utc_now()
+  |> birl.subtract(duration.minutes(2))
+  |> run_bot(bot, _)
 }
