@@ -112,9 +112,10 @@ fn handle_bridge_message(
           |> discord_gleam.send_message(bot, data.channel_id, _, [])
         Error(e) -> {
           use channel <- with_dm(bot, data.author)
-          let error = wrap_in_backticks("Error parsing your command: " <> e)
 
-          discord_gleam.send_message(bot, channel.id, error, [])
+          { "Error parsing your command: " <> e }
+          |> wrap_in_backticks
+          |> discord_gleam.send_message(bot, channel.id, _, [])
         }
       }
   }
