@@ -119,10 +119,12 @@ pub fn diagram_p() -> Parser(Diagram) {
   use fields <- party.try(fields_p())
   use layout <- result.map(fetch_layout(fields))
   let lead = fetch_lead(fields)
-  let seat = fetch_seat(fields)
-  let vul = fetch_vul(fields)
-  let scoring = fetch_scoring(fields)
-  let details = Details(seat:, vul:, scoring:)
+  let details =
+    Details(
+      seat: fetch_seat(fields),
+      vul: fetch_vul(fields),
+      scoring: fetch_scoring(fields),
+    )
 
   Diagram(layout:, lead:, details:)
 }
