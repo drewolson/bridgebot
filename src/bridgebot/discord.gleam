@@ -170,16 +170,7 @@ pub fn main() {
   let assert Ok(token) = env.get_string("DISCORD_TOKEN")
   let assert Ok(client_id) = env.get_string("DISCORD_CLIENT_ID")
 
-  let bot =
-    discord_gleam.bot(
-      token,
-      client_id,
-      intents.Intents(
-        message_content: True,
-        guild_messages: True,
-        direct_messages: True,
-      ),
-    )
+  let bot = discord_gleam.bot(token, client_id, intents.default_intents())
 
   birl.utc_now()
   |> birl.subtract(duration.minutes(2))
