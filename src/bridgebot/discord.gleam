@@ -30,6 +30,12 @@ fn wrap_in_backticks(s: String) -> String {
   "```" <> s <> "```"
 }
 
+fn send_dm(bot: Bot, user_id: String, message: String) -> Nil {
+  let _ = discord_gleam.send_direct_message(bot, user_id, message, [])
+
+  Nil
+}
+
 fn set_log_level() -> Nil {
   let level = case env.get_string("LOG_LEVEL") {
     Ok("DEBUG") -> logging.Debug
@@ -69,7 +75,7 @@ fn handle_bridge_message(
     "help" -> {
       pprint.help()
       |> wrap_in_backticks
-      |> discord_gleam.send_direct_message(bot, data.author.id, _, [])
+      |> send_dm(bot, data.author.id, _)
     }
     _ ->
       case parser.parse(content) {
@@ -82,7 +88,7 @@ fn handle_bridge_message(
         Error(e) -> {
           { "Error parsing your command: " <> e }
           |> wrap_in_backticks
-          |> discord_gleam.send_direct_message(bot, data.author.id, _, [])
+          |> send_dm(bot, data.author.id, _)
         }
       }
   }
