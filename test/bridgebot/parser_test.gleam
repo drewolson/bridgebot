@@ -1,7 +1,6 @@
 import bridgebot/parser
 import gleam/list
 import gleam/string
-import gleeunit/should
 
 pub fn field_order_does_not_matter_test() {
   let fields = ["akx qtxxx jxx tx; qjxxx akx qx xxx", "rr", "mps", "CA"]
@@ -12,6 +11,6 @@ pub fn field_order_does_not_matter_test() {
   let orig_result = parser.parse(orig)
   let shuffled_result = parser.parse(shuffled)
 
-  orig_result |> should.be_ok
-  orig_result |> should.equal(shuffled_result)
+  let assert Ok(_) = orig_result
+  assert orig_result == shuffled_result
 }
