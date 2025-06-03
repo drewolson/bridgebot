@@ -118,14 +118,6 @@ pub fn compass() -> Box {
   Box([" ----- ", "|  N  |", "|W   E|", "|  S  |", " ----- "])
 }
 
-pub fn compass_ne() -> Box {
-  Box([" ----- ", "|  N  |", "|    E|", "|     |", " ----- "])
-}
-
-pub fn compass_nw() -> Box {
-  Box([" ----- ", "|  N  |", "|W    |", "|     |", " ----- "])
-}
-
 pub fn to_string(box: Box) -> String {
   box.lines |> list.map(string.trim_end) |> string.join("\n")
 }

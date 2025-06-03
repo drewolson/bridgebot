@@ -1,5 +1,5 @@
 ---
-version: 1.2.7
+version: 1.3.0
 title: bridgebot defender west
 file: ./test/bridgebot_test.gleam
 test_name: defender_west_test
@@ -10,6 +10,6 @@ IMPs       ♥AKQJ
            ♣KJ9
 ♠T987       -----
 ♥6543      |  N  |
-♦          |W    |
-♣76532     |     |
+♦          |W   E|
+♣76532     |  S  |
             -----

@@ -81,19 +81,19 @@ fn defense_to_string(
     perspective.East, None ->
       box.rows([
         box.columns([box.hand(dummy), box.details(details)]),
-        box.columns([box.compass_ne(), box.hand(defender)]),
+        box.columns([box.compass(), box.hand(defender)]),
       ])
       |> box.to_string
     perspective.East, Some(lead) ->
       box.rows([
         box.columns([box.details(details), box.hand(dummy)]),
-        box.columns([box.lead(lead), box.compass_ne(), box.hand(defender)]),
+        box.columns([box.lead(lead), box.compass(), box.hand(defender)]),
       ])
       |> box.to_string
     perspective.West, _ ->
       box.rows([
         box.columns([box.details(details), box.hand(dummy)]),
-        box.columns([box.hand(defender), box.compass_nw()]),
+        box.columns([box.hand(defender), box.compass()]),
       ])
       |> box.to_string
   }
