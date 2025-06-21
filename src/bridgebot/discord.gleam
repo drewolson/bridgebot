@@ -50,12 +50,13 @@ fn delete_non_dm(bot: Bot, message: MessagePacketData) -> Nil {
   case option.is_some(message.guild_id) {
     False -> Nil
     True -> {
-      discord_gleam.delete_message(
-        bot,
-        message.channel_id,
-        message.id,
-        "bridge bot",
-      )
+      let _ =
+        discord_gleam.delete_message(
+          bot,
+          message.channel_id,
+          message.id,
+          "bridge bot",
+        )
 
       Nil
     }
@@ -79,12 +80,16 @@ fn handle_bridge_message(
     }
     _ ->
       case parser.parse(content) {
-        Ok(diagram) ->
-          diagram
-          |> pprint.to_string
-          |> prepend_username(data.author.username)
-          |> wrap_in_backticks
-          |> discord_gleam.send_message(bot, data.channel_id, _, [])
+        Ok(diagram) -> {
+          let _ =
+            diagram
+            |> pprint.to_string
+            |> prepend_username(data.author.username)
+            |> wrap_in_backticks
+            |> discord_gleam.send_message(bot, data.channel_id, _, [])
+
+          Nil
+        }
         Error(e) -> {
           { "Error parsing your command: " <> e }
           |> wrap_in_backticks
