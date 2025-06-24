@@ -2,6 +2,7 @@ import bridgebot/card.{type Card}
 import bridgebot/hand.{type Hand}
 import bridgebot/perspective.{type Perspective}
 import gleam/dict
+import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
@@ -51,7 +52,15 @@ pub fn declarer_from_holdings(
   case holdings {
     [north, east, south, west] -> Ok(DoubleDummy(north:, east:, south:, west:))
     [north, south] -> Ok(SingleDummy(north:, south:))
-    [hand] -> Ok(SingleHand(hand:))
+    [hand] -> {
+      case list.length(hand) {
+        13 -> Ok(SingleHand(hand:))
+        n ->
+          Error(
+            "A single hand must contain 13 cards, found " <> int.to_string(n),
+          )
+      }
+    }
     _ -> Error("Must provide 1, 2, or 4 hands")
   }
 }

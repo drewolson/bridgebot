@@ -14,3 +14,9 @@ pub fn field_order_does_not_matter_test() {
   let assert Ok(_) = orig_result
   assert orig_result == shuffled_result
 }
+
+pub fn single_hand_must_contain_13_cards_test() {
+  let result = parser.parse("qjxxx akx qx xx")
+
+  assert result == Error("A single hand must contain 13 cards, found 12")
+}

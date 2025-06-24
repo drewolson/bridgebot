@@ -103,11 +103,11 @@ fn seat_field_p() -> Parser(#(String, Field)) {
 fn fields_p() -> Parser(Dict(String, Field)) {
   use fields <- party.map(party.sep1(
     party.choice([
-      layout_field_p(),
       lead_field_p(),
       vul_field_p(),
       scoring_field_p(),
       seat_field_p(),
+      layout_field_p(),
     ]),
     party.string(",") |> core.drop_whitespace,
   ))
