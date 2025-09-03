@@ -47,22 +47,17 @@ fn single_dummy_to_string(
   lead: Option(card.Card),
   details: details.Details,
 ) -> String {
-  case lead {
-    None ->
-      box.rows([
-        box.columns([box.hand(north), box.details(details)]),
-        box.empty(10),
-        box.hand(south),
-      ])
-      |> box.to_string
-    Some(card) ->
-      box.rows([
-        box.columns([box.details(details), box.hand(north)]),
-        box.lead(card),
-        box.columns([box.empty(10), box.hand(south)]),
-      ])
-      |> box.to_string
+  let lead_box = case lead {
+    None -> box.empty(10)
+    Some(card) -> box.lead(card)
   }
+
+  box.rows([
+    box.columns([box.details(details), box.hand(north)]),
+    lead_box,
+    box.columns([box.empty(10), box.hand(south)]),
+  ])
+  |> box.to_string
 }
 
 fn single_hand_to_string(hand: hand.Hand, details: details.Details) -> String {

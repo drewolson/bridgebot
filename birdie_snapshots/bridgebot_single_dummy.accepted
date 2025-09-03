@@ -1,15 +1,15 @@
 ---
-version: 1.3.1
+version: 1.4.0
 title: bridgebot single dummy
 file: ./test/bridgebot_test.gleam
 test_name: single_dummy_test
 ---
-♠AKx       R/R
-♥QTxxx     MPs
-♦Jxx
-♣Tx
+R/R        ♠AKx
+MPs        ♥QTxxx
+           ♦Jxx
+           ♣Tx
 
-♠QJxxx
-♥AKx
-♦Qx
-♣xxx
+           ♠QJxxx
+           ♥AKx
+           ♦Qx
+           ♣xxx
