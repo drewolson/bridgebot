@@ -1,5 +1,3 @@
-import birl.{type Time}
-import birl/duration
 import bridgebot/parser
 import bridgebot/pprint
 import discord_gleam
@@ -7,8 +5,8 @@ import discord_gleam/discord/intents
 import discord_gleam/event_handler.{type Packet}
 import discord_gleam/types/bot.{type Bot}
 import discord_gleam/ws/packets/message.{type MessagePacketData}
+import gleam/erlang/process
 import gleam/option
-import gleam/order
 import gleam/string
 import glenvy/env
 import logging
@@ -113,30 +111,6 @@ fn handler(bot: Bot, packet: Packet) -> Nil {
   }
 }
 
-pub fn run_bot(bot: Bot, last_restart: Time) -> Nil {
-  logging.log(logging.Info, "Starting bot")
-  logging.log(
-    logging.Info,
-    "Last restart at: " <> birl.to_iso8601(last_restart),
-  )
-
-  let now = birl.utc_now()
-  let diff = birl.difference(now, last_restart)
-
-  case duration.compare(diff, duration.minutes(1)) {
-    order.Gt -> {
-      logging.log(logging.Info, "Running...")
-      discord_gleam.run(bot, [handler])
-      run_bot(bot, now)
-    }
-    _ ->
-      logging.log(
-        logging.Info,
-        "Refusing to restart, last restart was too recent",
-      )
-  }
-}
-
 pub fn main() {
   logging.configure()
 
@@ -147,7 +121,10 @@ pub fn main() {
 
   let bot = discord_gleam.bot(token, client_id, intents.default())
 
-  birl.utc_now()
-  |> birl.subtract(duration.minutes(2))
-  |> run_bot(bot, _)
+  let assert Ok(_) =
+    bot
+    |> discord_gleam.simple([handler])
+    |> discord_gleam.start()
+
+  process.sleep_forever()
 }
