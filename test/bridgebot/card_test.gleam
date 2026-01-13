@@ -3,11 +3,6 @@ import bridgebot/index.{Known, Unknown}
 import bridgebot/rank.{Ace, King}
 import bridgebot/suit.{Hearts, Spades}
 import gleam/order.{Gt, Lt}
-import gleeunit
-
-pub fn main() {
-  gleeunit.main()
-}
 
 pub fn order_checks_suit_first_test() {
   let a = Card(suit: Spades, index: Known(Ace))
