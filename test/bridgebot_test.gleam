@@ -1,10 +1,10 @@
 import birdie
 import bridgebot/parser
 import bridgebot/pprint
-import gleeunit
+import unitest
 
 pub fn main() {
-  gleeunit.main()
+  unitest.main()
 }
 
 pub fn single_hand_test() {
