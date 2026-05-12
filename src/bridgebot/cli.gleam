@@ -1,13 +1,10 @@
 import bridgebot/parser
 import bridgebot/pprint
 import gleam/io
-import gleam/yielder
-import stdin
+import in
 
 pub fn main() {
-  let assert Ok(content) =
-    stdin.read_lines()
-    |> yielder.first()
+  let assert Ok(content) = in.read_line()
 
   case parser.parse(content) {
     Ok(diagram) -> {

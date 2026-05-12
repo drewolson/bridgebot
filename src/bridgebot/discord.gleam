@@ -5,10 +5,10 @@ import discord_gleam/discord/intents
 import discord_gleam/event_handler.{type Packet}
 import discord_gleam/types/bot.{type Bot}
 import discord_gleam/ws/packets/message.{type MessagePacketData}
+import envoy
 import gleam/erlang/process
 import gleam/option
 import gleam/string
-import glenvy/env
 import logging
 
 fn trim(str: String) -> String {
@@ -35,7 +35,7 @@ fn send_dm(bot: Bot, user_id: String, message: String) -> Nil {
 }
 
 fn set_log_level() -> Nil {
-  let level = case env.string("LOG_LEVEL") {
+  let level = case envoy.get("LOG_LEVEL") {
     Ok("DEBUG") -> logging.Debug
     Ok("INFO") -> logging.Info
     _ -> logging.Error
@@ -116,8 +116,8 @@ pub fn main() {
 
   set_log_level()
 
-  let assert Ok(token) = env.string("DISCORD_TOKEN")
-  let assert Ok(client_id) = env.string("DISCORD_CLIENT_ID")
+  let assert Ok(token) = envoy.get("DISCORD_TOKEN")
+  let assert Ok(client_id) = envoy.get("DISCORD_CLIENT_ID")
 
   let bot = discord_gleam.bot(token, client_id, intents.default())
 
